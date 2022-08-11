@@ -1,6 +1,14 @@
 from flask import Flask, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
+
+import os
+
 
 app = Flask(__name__)
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'planets.db')
+
+db = SQLAlchemy(app)
 
 
 @app.route('/')
@@ -24,7 +32,7 @@ def parameters():
 
 
 @app.route('/url_vars/<string:name>/<int:age>')
-def url_vars(name: str, age: int):
+def url_variables(name: str, age: int):
     if age < 18:
         return jsonify(message='leider ' + name), 401
     else:
