@@ -60,11 +60,6 @@ def db_seed():
     print('Database seeded')
 
 
-@app.route('/')
-def hello_world():
-    return jsonify(message='Hallo Welt!!'), 200
-
-
 @app.route('/not_found')
 def not_found():
     return jsonify(message='not found'), 404
@@ -93,6 +88,22 @@ def planets():
     planets_list = Planet.query.all()
     result = planets_schema.dump(planets_list)
     return jsonify(result)
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    email = request.form['email']
+    test = User.query.filter_by(email=email).first()
+    if test:
+        return jsonify(message='Email already exists'), 409
+    else:
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        password = request.form['password']
+        user = User(first_name=first_name, last_name=last_name, email=email, password=password)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify(message='User created successfully'), 201
 
 
 class User(db.Model):
